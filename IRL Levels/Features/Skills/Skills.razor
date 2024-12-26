@@ -1,0 +1,20 @@
+﻿@page "/"
+@page "/skills"
+
+<h3>Skills</h3>
+
+<div class="container">
+    @foreach(var skill in SkillList)
+    {
+        <SkillLabel Skill="skill" />
+    }
+</div>
+
+@code {
+    private List<Skill> SkillList = new() {
+        new("Agility", "images/agility.svg", "skill-icon agility"),
+        new("Attack", "images/attack.svg", "skill-icon attack"),
+        new("Ranged", "images/ranged.svg", "skill-icon ranged"),
+        new("Strength", "images/strength.svg", "skill-icon strength")
+    };
+}

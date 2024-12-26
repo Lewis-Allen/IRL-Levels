@@ -1,0 +1,155 @@
+﻿@page "/skills/{skillname}";
+@inject HttpClient Http;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@using System.Text.Json;
+
+@if (SelectedComponent is not null)
+{
+    <img class="skill-icon border border-3" src="images/@(SelectedComponent.Name).svg" />
+
+    <p>Current XP: @currentXP</p>
+    <p>Current Level: @currentLevel</p>
+    <p>Remaining XP: @remainingXP</p>
+    <p>Percentage: @percentage</p>
+
+    <DynamicComponent Type="SelectedComponent.Type" Parameters="SelectedComponent.Parameters" />
+}
+
+@code {
+
+    [Parameter]
+    public required string SkillName { get; set; }
+
+    private int currentXP;
+    private int currentLevel;
+    private int remainingXP;
+    private int percentage;
+
+    private Dictionary<string, ComponentMetaData> Components => new()
+        {
+            ["ranged"] = new ComponentMetaData()
+            {
+                Type = typeof(Ranged.Ranged),
+                Name = "ranged",
+                Parameters = { [nameof(Ranged.Ranged.IncrementXP)] = EventCallback.Factory.Create<int>(this, IncrementXP) }
+            },
+            ["agility"] = new ComponentMetaData()
+            {
+                Type = typeof(Agility.Agility),
+                Name = "agility",
+                Parameters = { [nameof(Agility.Agility.IncrementXP)] = EventCallback.Factory.Create<int>(this, IncrementXP) }
+            },
+            ["attack"] = new ComponentMetaData()
+            {
+                Type = typeof(Attack.Attack),
+                Name = "attack",
+                Parameters = { [nameof(Attack.Attack.IncrementXP)] = EventCallback.Factory.Create<int>(this, IncrementXP) }
+            },
+            ["strength"] = new ComponentMetaData()
+            {
+                Type = typeof(Strength.Strength),
+                Name = "strength",
+                Parameters = { [nameof(Strength.Strength.IncrementXP)] = EventCallback.Factory.Create<int>(this, IncrementXP) }
+            },
+        };
+
+    private ComponentMetaData? SelectedComponent;
+
+    private LevelBoundry[] Levels { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        string skillType = SkillName.ToLower() switch
+        {
+            "ranged" => nameof(Ranged),
+            "agility" => nameof(Agility),
+            "attack" => nameof(Attack),
+            "strength" => nameof(Strength),
+            _ => throw new NotSupportedException() // need to 404 here
+        };
+
+        SelectedComponent = Components[SkillName.ToLower()];
+
+        await LoadXP();
+    }
+
+    private async Task LoadXP()
+    {
+        currentXP = 0;
+
+        var levels = await Http.GetFromJsonAsync<LevelBoundry[]>("sample-data/OSRS_EXP_Table.json") ?? [];
+
+        Levels = levels
+            .OrderBy(l => l.Level)
+            .ToArray();
+
+        var storedXP = await localStorage.GetItemAsync<int>(SelectedComponent.Name);
+
+        if (storedXP != default)
+        {
+            currentXP = storedXP;
+        }
+
+        currentLevel = GetCurrentLevel(currentXP);
+        remainingXP = GetRemainingXP(currentXP);
+        percentage = GetPercentage(currentXP);
+    }
+
+    private async Task IncrementXP(int score)
+    {
+        currentXP += score;
+        currentLevel = GetCurrentLevel(currentXP);
+        remainingXP = GetRemainingXP(currentXP);
+        percentage = GetPercentage(currentXP);
+
+        await localStorage.SetItemAsync(SelectedComponent.Name, currentXP);
+    }
+
+    private int GetCurrentLevel(int xp)
+    {
+        var level = Levels?.Where(l => xp >= l.Experience).MaxBy(l => l.Level);
+
+        var currentLevel = 1;
+        if (level is not null)
+        {
+            currentLevel = level.Level;
+        }
+
+        return currentLevel;
+    }
+
+    private int GetRemainingXP(int xp)
+    {
+        var level = Levels?.Where(l => xp < l.Experience).MinBy(l => l.Level);
+
+        var remainingXP = 0;
+        if (level is not null)
+        {
+            remainingXP = level.Experience - xp;
+        }
+
+        return remainingXP;
+    }
+
+    private int GetPercentage(int currentXP)
+    {
+        var level = Levels?.Where(l => currentXP >= l.Experience).MaxBy(l => l.Level);
+
+        decimal percentage = 0;
+
+        if (level is not null)
+        {
+            var baseXP = level.Experience;
+            var nextLevelXP = currentXP + remainingXP;
+
+            var totalRequired = (decimal)(nextLevelXP - baseXP);
+            var remaining = (decimal)remainingXP;
+
+            if (totalRequired != 0 && remainingXP != 0)
+            {
+                percentage = Math.Round(1 - (remainingXP / totalRequired), 2, MidpointRounding.ToZero);
+            }
+        }
+        return (int)(percentage * 100);
+    }
+}

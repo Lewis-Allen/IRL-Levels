@@ -1,0 +1,10 @@
+﻿@inject NavigationManager Nav
+
+<div class="item">
+    <a href="@(Nav.BaseUri + "skills/" + Skill.Name.ToLower())"><img class="@Skill.CSSClass" src="@Skill.ImageURL" alt="@Skill.Name" /></a>
+</div>
+
+
+@code {
+    [Parameter] public required Skill Skill { get; set; }
+}

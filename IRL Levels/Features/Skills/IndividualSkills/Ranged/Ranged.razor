@@ -1,0 +1,21 @@
+﻿@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@using System.Text.Json
+
+<button class="btn bg-white border border-2" @onclick="() => IncrementXP.InvokeAsync(4)">1</button>
+<button class="btn bg-white border border-2" @onclick="() => IncrementXP.InvokeAsync(8)">2</button>
+<button class="btn btn-dark border border-2" @onclick="() => IncrementXP.InvokeAsync(12)">3</button>
+<button class="btn btn-dark border border-2" @onclick="() => IncrementXP.InvokeAsync(16)">4</button>
+<button class="btn btn-primary border border-2" @onclick="() => IncrementXP.InvokeAsync(20)">5</button>
+<button class="btn btn-primary border border-2" @onclick="() => IncrementXP.InvokeAsync(24)">6</button>
+<button class="btn btn-danger border border-2" @onclick="() => IncrementXP.InvokeAsync(28)">7</button>
+<button class="btn btn-danger border border-2" @onclick="() => IncrementXP.InvokeAsync(32)">8</button>
+<button class="btn btn-warning border border-2" @onclick="() => IncrementXP.InvokeAsync(36)">9</button>
+<button class="btn btn-warning border border-2" @onclick="() => IncrementXP.InvokeAsync(40)">10</button>
+<button class="btn btn-warning border border-2" @onclick="() => IncrementXP.InvokeAsync(40)">X</button>
+
+@code {
+    [Parameter]
+    public EventCallback<int> IncrementXP { get; set; }
+}

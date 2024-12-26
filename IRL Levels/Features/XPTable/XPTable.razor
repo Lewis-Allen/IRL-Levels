@@ -1,0 +1,46 @@
+﻿@page "/xp-table";
+@inject HttpClient Http
+
+<h3>Experience Table</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Level</th>
+            <th>Experience</th>
+            <th>Difference</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Levels.Length == 0)
+        {
+            <tr>
+                <td colspan="3">Loading...</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var level in Levels)
+            {
+                <tr>
+                    <td>@level.Level</td>
+                    <td>@level.Experience</td>
+                    <td>@level.Difference</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@code {
+
+    private LevelBoundry[] Levels { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var levels = await Http.GetFromJsonAsync<LevelBoundry[]>("sample-data/OSRS_EXP_Table.json") ?? [];
+
+        Levels = levels
+            .OrderBy(l => l.Level)
+            .ToArray();
+    }
+}
