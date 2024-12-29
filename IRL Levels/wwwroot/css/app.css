@@ -1,5 +1,5 @@
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 h1:focus {
@@ -114,7 +114,3 @@ code {
 }
 
 /* ----------------------------- BEGIN CUSTOM CSS ----------------------------- */
-
-.skill-icon {
-    width: 200px;
-}

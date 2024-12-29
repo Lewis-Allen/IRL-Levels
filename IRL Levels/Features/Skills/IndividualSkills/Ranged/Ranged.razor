@@ -3,19 +3,85 @@
 
 @using System.Text.Json
 
-<button class="btn bg-white border border-2" @onclick="() => IncrementXP.InvokeAsync(4)">1</button>
-<button class="btn bg-white border border-2" @onclick="() => IncrementXP.InvokeAsync(8)">2</button>
-<button class="btn btn-dark border border-2" @onclick="() => IncrementXP.InvokeAsync(12)">3</button>
-<button class="btn btn-dark border border-2" @onclick="() => IncrementXP.InvokeAsync(16)">4</button>
-<button class="btn btn-primary border border-2" @onclick="() => IncrementXP.InvokeAsync(20)">5</button>
-<button class="btn btn-primary border border-2" @onclick="() => IncrementXP.InvokeAsync(24)">6</button>
-<button class="btn btn-danger border border-2" @onclick="() => IncrementXP.InvokeAsync(28)">7</button>
-<button class="btn btn-danger border border-2" @onclick="() => IncrementXP.InvokeAsync(32)">8</button>
-<button class="btn btn-warning border border-2" @onclick="() => IncrementXP.InvokeAsync(36)">9</button>
-<button class="btn btn-warning border border-2" @onclick="() => IncrementXP.InvokeAsync(40)">10</button>
-<button class="btn btn-warning border border-2" @onclick="() => IncrementXP.InvokeAsync(40)">X</button>
+<div class="row">
+    <div class="col d-flex justify-content-center">
+        <button class="xp-button btn btn-warning border border-2 m-1" @onclick='async () => await Score("X")'>X</button>
+        <button class="xp-button btn btn-warning border border-2 m-1" @onclick='async () => await Score("10")'>10</button>
+        <button class="xp-button btn btn-warning border border-2 m-1" @onclick='async () => await Score("9")'>9</button>
+        <button class="xp-button btn btn-danger border border-2 m-1" @onclick='async () => await Score("8")'>8</button>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col d-flex justify-content-center">
+        <button class="xp-button btn btn-danger border border-2 m-1" @onclick='async () => await Score("7")'>7</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick='async () => await Score("6")'>6</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick='async () => await Score("5")'>5</button>
+        <button class="xp-button btn btn-dark border border-2 m-1" @onclick='async () => await Score("4")'>4</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col d-flex justify-content-center">
+        <button class="xp-button btn btn-dark border border-2 m-1" @onclick='async () => await Score("3")'>3</button>
+        <button class="xp-button btn bg-white border border-2 m-1" @onclick='async () => await Score("2")'>2</button>
+        <button class="xp-button btn bg-white border border-2 m-1" @onclick='async () => await Score("1")'>1</button>
+        <button class="xp-button btn bg-light border border-black  border-2 m-1" @onclick='async () => await Score("M")'>M</button>
+    </div>
+</div>
 
 @code {
     [Parameter]
     public EventCallback<int> IncrementXP { get; set; }
+
+    private List<Score> Scores { get; set; } = [];
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Scores = await GetScores();
+    }
+
+    public async Task Score(string score)
+    {
+        var xp = score switch
+        {
+            "X" => 40, /* X is worth 10 * 4 */
+            "M" => 0,
+            _ => int.Parse(score) * 4
+        };
+
+        await AddScore(new Score(DateTime.Now, score));
+
+        await IncrementXP.InvokeAsync(xp);
+    }
+
+    private const string RANGED_HISTORY = "ranged-history";
+
+    private async Task<List<Score>> GetScores()
+    {
+        List<Score> history = [];
+
+        if (await localStorage.ContainKeyAsync(RANGED_HISTORY))
+        {
+            history = await localStorage.GetItemAsync<List<Score>>(RANGED_HISTORY) ?? [];
+        }
+
+        return history;
+    }
+
+    private async Task AddScore(Score score)
+    {
+        var scores = await GetScores();
+
+        scores.Add(score);
+
+        await SetScores(scores);
+    }
+
+    private async Task SetScores(List<Score> scores)
+    {
+        Scores = scores;
+
+        await localStorage.SetItemAsync(RANGED_HISTORY, scores);
+    }
 }

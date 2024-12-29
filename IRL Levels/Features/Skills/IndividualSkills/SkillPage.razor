@@ -5,12 +5,32 @@
 
 @if (SelectedComponent is not null)
 {
-    <img class="skill-icon border border-3" src="images/@(SelectedComponent.Name).svg" />
+    <div class="container" style="max-width:500px;">
+        <div class="row">
+            <div class="col">
+                <div class="bg-light p-3 m-3 rounded">
+                    <div class="row">
+                        <div class="col d-flex justify-content-between">
+                            <img src="@("images/" + SkillName).svg" class="skill-icon w-50 p-3" alt="@(SkillName)" />
+                            <div class="d-flex flex-column justify-content-around">
+                                <h1>Lvl: @currentLevel</h1>
+                                <h2>XP: @($"{currentXP:n0}")</h2>
+                                <h2>Left: @($"{remainingXP:n0}")</h2>
 
-    <p>Current XP: @currentXP</p>
-    <p>Current Level: @currentLevel</p>
-    <p>Remaining XP: @remainingXP</p>
-    <p>Percentage: @percentage</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="progress" style="height: 40px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: @(percentage)%; font-size:18px;" aria-valuenow="@(percentage)" aria-valuemin="0" aria-valuemax="100">@(percentage)%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <DynamicComponent Type="SelectedComponent.Type" Parameters="SelectedComponent.Parameters" />
 }
@@ -83,11 +103,14 @@
             .OrderBy(l => l.Level)
             .ToArray();
 
-        var storedXP = await localStorage.GetItemAsync<int>(SelectedComponent.Name);
-
-        if (storedXP != default)
+        if (SelectedComponent is not null)
         {
-            currentXP = storedXP;
+            var storedXP = await localStorage.GetItemAsync<int>(SelectedComponent.Name);
+
+            if (storedXP != default)
+            {
+                currentXP = storedXP;
+            }
         }
 
         currentLevel = GetCurrentLevel(currentXP);
@@ -102,7 +125,10 @@
         remainingXP = GetRemainingXP(currentXP);
         percentage = GetPercentage(currentXP);
 
-        await localStorage.SetItemAsync(SelectedComponent.Name, currentXP);
+        if (SelectedComponent is not null)
+        {
+            await localStorage.SetItemAsync(SelectedComponent.Name, currentXP);
+        }
     }
 
     private int GetCurrentLevel(int xp)
