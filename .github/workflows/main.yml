@@ -18,7 +18,7 @@ jobs:
     - name: Re-write base href
       uses: SteveSandersonMS/ghaction-rewrite-base-href@v1.1.0
       with:
-        html_path: 'wwwroot/index.html'
+        html_path: 'build/wwwroot/index.html'
         base_href: '/IRL-Levels/'
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
