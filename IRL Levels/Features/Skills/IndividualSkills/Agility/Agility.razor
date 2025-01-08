@@ -3,11 +3,16 @@
 
 @using System.Text.Json
 
-<button class="btn bg-primary border border-2" @onclick="() => IncrementXP.InvokeAsync(4)">1</button>
-<button class="btn bg-secondary border border-2" @onclick="() => IncrementXP.InvokeAsync(8)">2</button>
-<button class="btn bg-success border border-2" @onclick="() => IncrementXP.InvokeAsync(16)">4</button>
-<button class="btn bg-warning border border-2" @onclick="() => IncrementXP.InvokeAsync(24)">6</button>
-<button class="btn bg-info border border-2" @onclick="() => IncrementXP.InvokeAsync(48)">12</button>
+<div class="row">
+    <div class="col d-flex justify-content-center">
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(4)">1</button>
+        <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(8)">2</button>
+        <button class="xp-button btn btn-success border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(16)">4</button>
+        <button class="xp-button btn btn-warning border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(24)">6</button>
+        <button class="xp-button btn btn-info border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(48)">12</button>
+    </div>
+</div>
+
 
 @code {
     [Parameter]
