@@ -5,11 +5,23 @@
 
 <div class="row">
     <div class="col d-flex justify-content-center">
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(4)">1</button>
-        <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(8)">2</button>
-        <button class="xp-button btn btn-success border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(16)">4</button>
-        <button class="xp-button btn btn-warning border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(24)">6</button>
-        <button class="xp-button btn btn-info border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(48)">12</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(10)">10m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(50)">50m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(100)">100m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(250)">250m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(500)">500m</button>
+    </div>
+    <div class="col d-flex justify-content-center">
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(1000)">1km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(2000)">2km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(5000)">5km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(10000)">10km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(25000)">25km</button>
+    </div>
+    <div class="col d-flex justify-content-center">
+        <InputNumber class="form-control m-1" @bind-Value="ManualEntry" />
+
+        <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(ManualEntry)">Manual Entry</button>
     </div>
 </div>
 
@@ -17,4 +29,6 @@
 @code {
     [Parameter]
     public EventCallback<decimal> IncrementXP { get; set; }
+
+    public decimal ManualEntry { get; set; }
 }

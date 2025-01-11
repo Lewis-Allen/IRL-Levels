@@ -1,10 +1,21 @@
 ﻿@page "/"
 @page "/skills"
 
-<h3>Skills</h3>
+@inject NavigationManager Nav
 
 <div class="container">
-    @foreach(var skill in SkillList)
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" @onclick="@(()=>Nav.NavigateTo("/settings"))">Settings</button>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="container">
+
+    @foreach (var skill in SkillList)
     {
         <SkillLabel Skill="skill" />
     }

@@ -1,0 +1,15 @@
+﻿@page "/settings"
+
+@inject NavigationManager Nav;
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" @onclick="@(()=>Nav.NavigateTo("/skills"))">Skills</button>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

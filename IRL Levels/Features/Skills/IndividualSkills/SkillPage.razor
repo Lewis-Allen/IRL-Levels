@@ -1,11 +1,18 @@
 ﻿@page "/skills/{skillname}";
 @inject HttpClient Http;
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager Nav
+
 @using System.Text.Json;
 
 @if (SelectedComponent is not null)
 {
     <div class="container" style="max-width:500px;">
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" @onclick="@(()=>Nav.NavigateTo("/skills"))">Skills</button>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <div class="bg-light p-3 m-3 rounded">
@@ -16,7 +23,6 @@
                                 <h1>Lvl: @currentLevel</h1>
                                 <h2>XP: @($"{currentXP:n0}")</h2>
                                 <h2>Left: @($"{remainingXP:n0}")</h2>
-
                             </div>
                         </div>
                     </div>
@@ -164,17 +170,17 @@
 
         if (level is not null)
         {
-            decimal baseXP = (decimal)level.Experience;
+            decimal baseXP = level.Experience;
             decimal nextLevelXP = currentXP + remainingXP;
 
-            decimal totalRequired = (decimal)(nextLevelXP - baseXP);
-            decimal remaining = (decimal)remainingXP;
+            decimal totalRequired = nextLevelXP - baseXP;
+            decimal remaining = remainingXP;
 
             if (totalRequired != 0 && remainingXP != 0)
             {
-                percentage = Math.Round(1m - (decimal)(remainingXP / totalRequired), 2, MidpointRounding.ToZero);
+                percentage = Math.Round(1m - (remainingXP / totalRequired), 4, MidpointRounding.ToZero);
             }
         }
-        return percentage * 100m;
+        return Math.Round(percentage * 100, 2);
     }
 }
