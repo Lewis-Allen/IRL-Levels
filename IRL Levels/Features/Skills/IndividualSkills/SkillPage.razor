@@ -39,10 +39,10 @@
     [Parameter]
     public required string SkillName { get; set; }
 
-    private int currentXP;
-    private int currentLevel;
-    private int remainingXP;
-    private int percentage;
+    private decimal currentXP;
+    private decimal currentLevel;
+    private decimal remainingXP;
+    private decimal percentage;
 
     private Dictionary<string, ComponentMetaData> Components => new()
         {
@@ -50,25 +50,25 @@
             {
                 Type = typeof(Ranged.Ranged),
                 Name = "ranged",
-                Parameters = { [nameof(Ranged.Ranged.IncrementXP)] = EventCallback.Factory.Create<int>(this, IncrementXP) }
+                Parameters = { [nameof(Ranged.Ranged.IncrementXP)] = EventCallback.Factory.Create<decimal>(this, IncrementXP) }
             },
             ["agility"] = new ComponentMetaData()
             {
                 Type = typeof(Agility.Agility),
                 Name = "agility",
-                Parameters = { [nameof(Agility.Agility.IncrementXP)] = EventCallback.Factory.Create<int>(this, IncrementXP) }
+                Parameters = { [nameof(Agility.Agility.IncrementXP)] = EventCallback.Factory.Create<decimal>(this, IncrementXP) }
             },
             ["attack"] = new ComponentMetaData()
             {
                 Type = typeof(Attack.Attack),
                 Name = "attack",
-                Parameters = { [nameof(Attack.Attack.IncrementXP)] = EventCallback.Factory.Create<int>(this, IncrementXP) }
+                Parameters = { [nameof(Attack.Attack.IncrementXP)] = EventCallback.Factory.Create<decimal>(this, IncrementXP) }
             },
             ["strength"] = new ComponentMetaData()
             {
                 Type = typeof(Strength.Strength),
                 Name = "strength",
-                Parameters = { [nameof(Strength.Strength.IncrementXP)] = EventCallback.Factory.Create<int>(this, IncrementXP) }
+                Parameters = { [nameof(Strength.Strength.IncrementXP)] = EventCallback.Factory.Create<decimal>(this, IncrementXP) }
             },
         };
 
@@ -104,7 +104,7 @@
 
         if (SelectedComponent is not null)
         {
-            var storedXP = await localStorage.GetItemAsync<int>(SelectedComponent.Name);
+            var storedXP = await localStorage.GetItemAsync<decimal>(SelectedComponent.Name);
 
             if (storedXP != default)
             {
@@ -117,7 +117,7 @@
         percentage = GetPercentage(currentXP);
     }
 
-    private async Task IncrementXP(int score)
+    private async Task IncrementXP(decimal score)
     {
         currentXP += score;
         currentLevel = GetCurrentLevel(currentXP);
@@ -130,7 +130,7 @@
         }
     }
 
-    private int GetCurrentLevel(int xp)
+    private decimal GetCurrentLevel(decimal xp)
     {
         var level = Levels?.Where(l => xp >= l.Experience).MaxBy(l => l.Level);
 
@@ -143,11 +143,11 @@
         return currentLevel;
     }
 
-    private int GetRemainingXP(int xp)
+    private decimal GetRemainingXP(decimal xp)
     {
         var level = Levels?.Where(l => xp < l.Experience).MinBy(l => l.Level);
 
-        var remainingXP = 0;
+        decimal remainingXP = 0;
         if (level is not null)
         {
             remainingXP = level.Experience - xp;
@@ -156,7 +156,7 @@
         return remainingXP;
     }
 
-    private int GetPercentage(int currentXP)
+    private decimal GetPercentage(decimal currentXP)
     {
         var level = Levels?.Where(l => currentXP >= l.Experience).MaxBy(l => l.Level);
 
@@ -164,17 +164,17 @@
 
         if (level is not null)
         {
-            var baseXP = level.Experience;
-            var nextLevelXP = currentXP + remainingXP;
+            decimal baseXP = (decimal)level.Experience;
+            decimal nextLevelXP = currentXP + remainingXP;
 
-            var totalRequired = (decimal)(nextLevelXP - baseXP);
-            var remaining = (decimal)remainingXP;
+            decimal totalRequired = (decimal)(nextLevelXP - baseXP);
+            decimal remaining = (decimal)remainingXP;
 
             if (totalRequired != 0 && remainingXP != 0)
             {
-                percentage = Math.Round(1 - (remainingXP / totalRequired), 2, MidpointRounding.ToZero);
+                percentage = Math.Round(1m - (decimal)(remainingXP / totalRequired), 2, MidpointRounding.ToZero);
             }
         }
-        return (int)(percentage * 100);
+        return percentage * 100m;
     }
 }
