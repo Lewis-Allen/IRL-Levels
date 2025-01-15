@@ -18,10 +18,12 @@
         <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(10000)">10km</button>
         <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(25000)">25km</button>
     </div>
-    <div class="col d-flex justify-content-center">
-        <InputNumber class="form-control m-1" @bind-Value="ManualEntry" />
+    <div class="col">
+        <div class="manual-input-container m-1 d-flex justify-content-center border border-2">
+            <InputNumber class="form-control m-1" @bind-Value="ManualEntryXP" placeholder="Enter Metres" />
 
-        <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(ManualEntry)">Manual Entry</button>
+            <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="async () => await ManualEntry(ManualEntryXP)">Submit</button>
+        </div>
     </div>
 </div>
 
@@ -30,5 +32,13 @@
     [Parameter]
     public EventCallback<decimal> IncrementXP { get; set; }
 
-    public decimal ManualEntry { get; set; }
+    public decimal? ManualEntryXP { get; set; }
+
+    public async Task ManualEntry(decimal? value)
+    {
+        if (ManualEntryXP is not null)
+        {
+            await IncrementXP.InvokeAsync((decimal)ManualEntryXP);
+        }
+    }
 }
