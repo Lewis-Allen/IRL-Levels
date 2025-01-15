@@ -20,7 +20,7 @@
     </div>
     <div class="col">
         <div class="manual-input-container m-1 d-flex justify-content-center border border-2">
-            <InputNumber class="form-control m-1" @bind-Value="ManualEntryXP" placeholder="Enter Metres" />
+            <InputNumber class="form-control m-1" @bind-Value="ManualEntryXP" placeholder="Enter Metres" min="0" />
 
             <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="async () => await ManualEntry(ManualEntryXP)">Submit</button>
         </div>
@@ -36,7 +36,7 @@
 
     public async Task ManualEntry(decimal? value)
     {
-        if (ManualEntryXP is not null)
+        if (ManualEntryXP is not null && ManualEntryXP > 0)
         {
             await IncrementXP.InvokeAsync((decimal)ManualEntryXP);
         }
