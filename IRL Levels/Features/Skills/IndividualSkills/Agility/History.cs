@@ -1,0 +1,1 @@
+﻿public record History(DateTime DateTime, decimal Value);

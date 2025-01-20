@@ -5,28 +5,33 @@
 
 <div class="row">
     <div class="col d-flex justify-content-center">
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(10)">10m</button>
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(50)">50m</button>
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(100)">100m</button>
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(250)">250m</button>
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(500)">500m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(10)">10m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(50)">50m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(100)">100m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(250)">250m</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(500)">500m</button>
     </div>
+</div>
+<div class="row">
     <div class="col d-flex justify-content-center">
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(1000)">1km</button>
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(2000)">2km</button>
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(5000)">5km</button>
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(10000)">10km</button>
-        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(25000)">25km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(1000)">1km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(2000)">2km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(5000)">5km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(10000)">10km</button>
+        <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(25000)">25km</button>
     </div>
+</div>
+<div class="row">
     <div class="col">
-        <div class="manual-input-container m-1 d-flex justify-content-center border border-2">
-            <InputNumber class="form-control m-1" @bind-Value="ManualEntryXP" placeholder="Enter Metres" min="0" />
-
-            <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="async () => await ManualEntry(ManualEntryXP)">Submit</button>
+        <div class="d-flex justify-content-around">
+            <button class="xp-button btn btn-warning border border-2 m-2" @onclick=Undo><i class="bi bi-arrow-counterclockwise h3"></i></button>
+            <div class="manual-input-container m-1 d-flex justify-content-center border border-2">
+                <InputNumber class="form-control m-1" @bind-Value="ManualEntryXP" placeholder="Enter Metres" min="0" />
+                <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="async () => await ManualEntry(ManualEntryXP)">Submit</button>
+            </div>
         </div>
     </div>
 </div>
-
 
 @code {
     [Parameter]
@@ -34,11 +39,58 @@
 
     public decimal? ManualEntryXP { get; set; }
 
+    private const string AGILITY_HISTORY = "agility-history";
+
     public async Task ManualEntry(decimal? value)
     {
-        if (ManualEntryXP is not null && ManualEntryXP > 0)
+        if (value is not null && value > 0)
         {
-            await IncrementXP.InvokeAsync((decimal)ManualEntryXP);
+            await AddEntry((decimal)value);
         }
+    }
+
+    public async Task AddEntry(decimal meters)
+    {
+        await AddHistory(new History(DateTime.Now, meters));
+
+        await IncrementXP.InvokeAsync(meters);
+    }
+
+    public async Task AddHistory(History record)
+    {
+        var history = await GetHistories();
+
+        history.Push(record);
+
+        await SetHistories(history);
+    }
+
+    public async Task Undo()
+    {
+        var history = await GetHistories();
+
+        if (history.Count > 0)
+        {
+            var remove = history.Pop();
+
+            await IncrementXP.InvokeAsync(remove.Value * -1m);
+
+            await SetHistories(history);
+        }
+    }
+
+    public async Task<Stack<History>> GetHistories()
+    {
+        if (await localStorage.ContainKeyAsync(AGILITY_HISTORY))
+        {
+            return new Stack<History>(await localStorage.GetItemAsync<List<History>>(AGILITY_HISTORY) ?? []);
+        }
+
+        return new Stack<History>();
+    }
+
+    public async Task SetHistories(Stack<History> histories)
+    {
+        await localStorage.SetItemAsync(AGILITY_HISTORY, histories);
     }
 }
