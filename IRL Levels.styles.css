@@ -1,0 +1,99 @@
+/* /Features/Layout/MainLayout.razor.rz.scp.css */
+.page[b-nc9na33des] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main[b-nc9na33des] {
+    flex: 1;
+}
+
+.sidebar[b-nc9na33des] {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+}
+
+.top-row[b-nc9na33des] {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+    .top-row[b-nc9na33des]  a, .top-row[b-nc9na33des]  .btn-link {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+        text-decoration: none;
+    }
+
+    .top-row[b-nc9na33des]  a:hover, .top-row[b-nc9na33des]  .btn-link:hover {
+        text-decoration: underline;
+    }
+
+    .top-row[b-nc9na33des]  a:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+@media (max-width: 640.98px) {
+    .top-row[b-nc9na33des] {
+        justify-content: space-between;
+    }
+
+    .top-row[b-nc9na33des]  a, .top-row[b-nc9na33des]  .btn-link {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 641px) {
+    .page[b-nc9na33des] {
+        flex-direction: row;
+    }
+
+    .sidebar[b-nc9na33des] {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row[b-nc9na33des] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .top-row.auth[b-nc9na33des]  a:first-child {
+        flex: 1;
+        text-align: right;
+        width: 0;
+    }
+
+    .top-row[b-nc9na33des], article[b-nc9na33des] {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+/* /Features/Skills/IndividualSkills/Agility/Agility.razor.rz.scp.css */
+.xp-button[b-lxvqyn2fdt] {
+    width: 100px;
+    height: 60px;
+}
+/* /Features/Skills/IndividualSkills/Ranged/Ranged.razor.rz.scp.css */
+.xp-button[b-7sky65k73r] {
+    width: 100px;
+    height: 60px;
+}
+/* /Features/Skills/IndividualSkills/Strength/Strength.razor.rz.scp.css */
+.xp-button[b-oeq1yn25fm] {
+    width: 100px;
+    height: 60px;
+}
+/* /Features/Skills/Skills.razor.rz.scp.css */
+.container[b-xx0j6q266a] {
+    display: flex;
+    gap: 10px;
+}
+
