@@ -1,8 +1,6 @@
 ﻿@inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
-@using System.Text.Json
-
 <div class="row">
     <div class="col d-flex justify-content-center">
         <button class="xp-button btn btn-primary border border-2 m-1" @onclick="async () => await AddEntry(10)">10m</button>
@@ -32,6 +30,27 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>History</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var history in History)
+                {
+                    <tr>
+                        <td>@history.DateTime</td>
+                        <td>@history.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @code {
     [Parameter]
@@ -39,7 +58,14 @@
 
     public decimal? ManualEntryXP { get; set; }
 
+    private History[] History { get; set; } = [];
+
     private const string AGILITY_HISTORY = "agility-history";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DisplayHistory();
+    }
 
     public async Task ManualEntry(decimal? value)
     {
@@ -83,7 +109,9 @@
     {
         if (await localStorage.ContainKeyAsync(AGILITY_HISTORY))
         {
-            return new Stack<History>(await localStorage.GetItemAsync<List<History>>(AGILITY_HISTORY) ?? []);
+            var history = await localStorage.GetItemAsync<List<History>>(AGILITY_HISTORY) ?? [];
+
+            return new Stack<History>(history.OrderBy(h => h.DateTime));
         }
 
         return new Stack<History>();
@@ -92,5 +120,17 @@
     public async Task SetHistories(Stack<History> histories)
     {
         await localStorage.SetItemAsync(AGILITY_HISTORY, histories);
+
+        await DisplayHistory();
+    }
+
+    public async Task DisplayHistory()
+    {
+        var histories = await GetHistories();
+
+        History = histories
+            .OrderByDescending(h => h.DateTime)
+            .Take(10)
+            .ToArray();
     }
 }
