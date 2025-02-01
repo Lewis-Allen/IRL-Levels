@@ -5,6 +5,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IClipboardService clipboardService
 @inject IWebShareService webShareService
+@inject NavigationManager Nav
 
 <div class="row">
     <div class="col d-flex justify-content-center">
@@ -148,8 +149,7 @@
 
     public async Task CopyHistory(History history)
     {
-        var text = $@"Agility {history.DateTime.ToShortDateString()} | {history.Value}m and flawless
-Level {CurrentLevel} 🏃";
+        var text = GetShareText(history);
 
         await clipboardService.CopyToClipboard(text);
     }
@@ -160,10 +160,13 @@ Level {CurrentLevel} 🏃";
         ShareData data = new ShareData()
             {
                 Title = "Agility",
-                Text = $@"Agility {history.DateTime.ToShortDateString()} | {history.Value}m and flawless
-Level {CurrentLevel} 🏃",
+                Text = GetShareText(history),
+                Url = $"{Nav.BaseUri}agility"
             };
 
         await webShareService.ShareAsync(data);
     }
+
+    public string GetShareText(History history) => $@"Agility {history.DateTime.ToShortDateString()} | {history.Value}m and flawless
+Level {CurrentLevel} 🏃";
 }
