@@ -1,5 +1,7 @@
-﻿@inject HttpClient Http
+﻿@using IRL_Levels.Services.Clipboard
+@inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IClipboardService clipboardService
 
 <div class="row">
     <div class="col d-flex justify-content-center">
@@ -37,6 +39,7 @@
                 <tr>
                     <th>History</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -45,6 +48,7 @@
                     <tr>
                         <td>@history.DateTime</td>
                         <td>@history.Value</td>
+                        <td><button class="btn p-0"><i class="bi bi-copy" @onclick="async () => await CopyToClipboard(history)"></i></button></td>
                     </tr>
                 }
             </tbody>
@@ -55,6 +59,9 @@
 @code {
     [Parameter]
     public EventCallback<decimal> IncrementXP { get; set; }
+
+    [CascadingParameter]
+    public decimal CurrentLevel { get; set; }
 
     public decimal? ManualEntryXP { get; set; }
 
@@ -132,5 +139,13 @@
             .OrderByDescending(h => h.DateTime)
             .Take(10)
             .ToArray();
+    }
+
+    public async Task CopyToClipboard(History history)
+    {
+        var text = $@"Agility {history.DateTime.ToLongDateString()} | {history.Value}m and flawless
+Level {CurrentLevel} 🏃";
+
+        await clipboardService.CopyToClipboard(text);
     }
 }

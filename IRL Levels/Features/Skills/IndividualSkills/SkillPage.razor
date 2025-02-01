@@ -20,7 +20,7 @@
                         <div class="col d-flex justify-content-between">
                             <img src="@("images/" + SkillName).svg" class="skill-icon w-50 p-3" alt="@(SkillName)" />
                             <div class="d-flex flex-column justify-content-around">
-                                <h1>Lvl: @currentLevel</h1>
+                                <h1>Lvl: @CurrentLevel</h1>
                                 <h2>XP: @($"{currentXP:n0}")</h2>
                                 <h2>Left: @($"{remainingXP:n0}")</h2>
                             </div>
@@ -36,7 +36,9 @@
                 </div>
             </div>
         </div>
-        <DynamicComponent Type="SelectedComponent.Type" Parameters="SelectedComponent.Parameters" />
+        <CascadingValue Value="CurrentLevel">
+            <DynamicComponent Type="SelectedComponent.Type" Parameters="SelectedComponent.Parameters" />
+        </CascadingValue>
     </div>
 }
 
@@ -45,8 +47,9 @@
     [Parameter]
     public required string SkillName { get; set; }
 
+    public decimal CurrentLevel { get; set; }
+
     private decimal currentXP;
-    private decimal currentLevel;
     private decimal remainingXP;
     private decimal percentage;
 
@@ -118,7 +121,7 @@
             }
         }
 
-        currentLevel = GetCurrentLevel(currentXP);
+        CurrentLevel = GetCurrentLevel(currentXP);
         remainingXP = GetRemainingXP(currentXP);
         percentage = GetPercentage(currentXP);
     }
@@ -126,7 +129,7 @@
     private async Task IncrementXP(decimal score)
     {
         currentXP += score;
-        currentLevel = GetCurrentLevel(currentXP);
+        CurrentLevel = GetCurrentLevel(currentXP);
         remainingXP = GetRemainingXP(currentXP);
         percentage = GetPercentage(currentXP);
 
