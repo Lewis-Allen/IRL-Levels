@@ -1,7 +1,10 @@
 ﻿@using IRL_Levels.Services.Clipboard
+@using Append.Blazor.WebShare
+
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IClipboardService clipboardService
+@inject IWebShareService webShareService
 
 <div class="row">
     <div class="col d-flex justify-content-center">
@@ -40,6 +43,7 @@
                     <th>History</th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -48,7 +52,8 @@
                     <tr>
                         <td>@history.DateTime</td>
                         <td>@history.Value</td>
-                        <td><button class="btn p-0"><i class="bi bi-copy" @onclick="async () => await CopyToClipboard(history)"></i></button></td>
+                        <td><button class="btn p-0"><i class="bi bi-copy" @onclick="async () => await CopyHistory(history)"></i></button></td>
+                        <td><button class="btn p-0"><i class="bi bi-share" @onclick="async () => await ShareHistory(history)"></i></button></td>
                     </tr>
                 }
             </tbody>
@@ -141,11 +146,24 @@
             .ToArray();
     }
 
-    public async Task CopyToClipboard(History history)
+    public async Task CopyHistory(History history)
     {
         var text = $@"Agility {history.DateTime.ToShortDateString()} | {history.Value}m and flawless
 Level {CurrentLevel} 🏃";
 
         await clipboardService.CopyToClipboard(text);
+    }
+
+    public async Task ShareHistory(History history)
+    {
+
+        ShareData data = new ShareData()
+            {
+                Title = "Agility",
+                Text = $@"Agility {history.DateTime.ToShortDateString()} | {history.Value}m and flawless
+Level {CurrentLevel} 🏃",
+            };
+
+        await webShareService.ShareAsync(data);
     }
 }
