@@ -33,9 +33,9 @@
 </div>
 <div class="row">
     <div class="col d-flex justify-content-center">
-        <InputNumber class="form-control m-1" @bind-Value="ManualEntry" />
+        <InputNumber class="form-control m-1" placeholder="Enter kg" @bind-Value="ManualEntry" />
 
-        <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="() => IncrementXP.InvokeAsync(ManualEntry)">Manual Entry</button>
+        <button class="xp-button btn btn-secondary border border-2 m-1" disabled="@(ManualEntry is null)" @onclick="() => IncrementXP.InvokeAsync(ManualEntry ?? 0)">Manual Entry</button>
     </div>
 </div>
 
@@ -43,5 +43,5 @@
     [Parameter]
     public EventCallback<decimal> IncrementXP { get; set; }
 
-    public decimal ManualEntry { get; set; }
+    public decimal? ManualEntry { get; set; }
 }

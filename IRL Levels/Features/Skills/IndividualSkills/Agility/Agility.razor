@@ -30,8 +30,8 @@
         <div class="d-flex justify-content-around">
             <button class="xp-button btn btn-warning border border-2 m-2" @onclick=Undo><i class="bi bi-arrow-counterclockwise h3"></i></button>
             <div class="manual-input-container m-1 d-flex justify-content-center border border-2">
-                <InputNumber class="form-control m-1" @bind-Value="ManualEntryXP" placeholder="Enter Metres" min="0" />
-                <button class="xp-button btn btn-secondary border border-2 m-1" @onclick="async () => await ManualEntry(ManualEntryXP)">Submit</button>
+                <InputNumber class="form-control m-1" @bind-value="ManualEntryXP" placeholder="Enter Metres" min="0" />
+                <button class="xp-button btn btn-secondary border border-2 m-1" disabled="@(ManualEntryXP is null)" @onclick="async () => await ManualEntry(ManualEntryXP ?? 0)">Submit</button>
             </div>
         </div>
     </div>
