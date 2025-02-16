@@ -6,6 +6,7 @@ public enum ExerciseType
 {
     [Description("Running")] Running = 0,
     [Description("Swimming")] Swimming = 1,
-    [Description("Rowing")] Rowing = 2
+    [Description("Rowing")] Rowing = 2,
+    [Description("Cycling")] Cycling = 3
 }
 

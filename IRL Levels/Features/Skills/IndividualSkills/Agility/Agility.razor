@@ -177,6 +177,7 @@ Level {CurrentLevel}";
         ExerciseType.Running => "🏃",
         ExerciseType.Swimming => "🏊‍♂",
         ExerciseType.Rowing => "🚣",
+        ExerciseType.Cycling => "🚴",
         _ => throw new NotSupportedException()
     };
 
@@ -185,6 +186,7 @@ Level {CurrentLevel}";
         ExerciseType.Running => 1m,
         ExerciseType.Swimming => 4m,
         ExerciseType.Rowing => 0.5m,
+        ExerciseType.Cycling => 0.25m,
         _ => throw new NotSupportedException()
     };
 }
