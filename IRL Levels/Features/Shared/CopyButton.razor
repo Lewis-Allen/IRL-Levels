@@ -1,0 +1,11 @@
+﻿@using IRL_Levels.Services.Clipboard
+
+@inject IClipboardService clipboardService
+
+<button class="btn p-0">
+    <i class="bi bi-copy" @onclick="async () => await clipboardService.CopyToClipboard(CopyText)" />
+</button>
+
+@code {
+    [Parameter] public required string CopyText { get; set; }
+}

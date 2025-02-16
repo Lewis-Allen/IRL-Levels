@@ -1,10 +1,10 @@
 ﻿@using IRL_Levels.Services.Clipboard
+@using IRL_Levels.Features.Shared
 @using Append.Blazor.WebShare
 
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IClipboardService clipboardService
-@inject IWebShareService webShareService
 @inject NavigationManager Nav
 
 <div class="row">
@@ -50,11 +50,13 @@
             <tbody>
                 @foreach (var history in History)
                 {
+                    var shareText = GetShareText(history);
+
                     <tr>
                         <td>@history.DateTime</td>
                         <td>@history.Value</td>
-                        <td><button class="btn p-0"><i class="bi bi-copy" @onclick="async () => await CopyHistory(history)"></i></button></td>
-                        <td><button class="btn p-0"><i class="bi bi-share" @onclick="async () => await ShareHistory(history)"></i></button></td>
+                        <td><CopyButton CopyText="@shareText" /></td>
+                        <td><ShareButton Title="Agility" ShareText="@shareText" URL="@(Nav.Uri)" /></td>
                     </tr>
                 }
             </tbody>
@@ -145,26 +147,6 @@
             .OrderByDescending(h => h.DateTime)
             .Take(10)
             .ToArray();
-    }
-
-    public async Task CopyHistory(History history)
-    {
-        var text = GetShareText(history);
-
-        await clipboardService.CopyToClipboard(text);
-    }
-
-    public async Task ShareHistory(History history)
-    {
-
-        ShareData data = new ShareData()
-            {
-                Title = "Agility",
-                Text = GetShareText(history),
-                Url = $"{Nav.BaseUri}skills/agility"
-            };
-
-        await webShareService.ShareAsync(data);
     }
 
     public string GetShareText(History history) => $@"Agility {history.DateTime.ToShortDateString()} | {history.Value}m and flawless

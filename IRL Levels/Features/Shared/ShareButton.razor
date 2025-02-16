@@ -1,0 +1,26 @@
+﻿@using Append.Blazor.WebShare
+
+@inject IWebShareService webShareService
+@inject NavigationManager Nav
+
+<button class="btn p-0">
+    <i class="bi bi-share" @onclick="async () => await ShareHistory()" />
+</button>
+
+@code {
+    [Parameter] public required string Title { get; set; }
+    [Parameter] public required string ShareText {get; set;}
+    [Parameter] public string? URL { get; set; }
+
+    public async Task ShareHistory()
+    {
+        ShareData data = new ShareData()
+            {
+                Title = Title,
+                Text = ShareText,
+                Url = URL
+            };
+
+        await webShareService.ShareAsync(data);
+    }
+}
