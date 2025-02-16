@@ -114,7 +114,7 @@
     {
         await AddHistory(new History(DateTime.Now, meters, selectedExerciseType));
 
-        await IncrementXP.InvokeAsync(meters);
+        await IncrementXP.InvokeAsync(meters * GetXPMultiplier(selectedExerciseType));
     }
 
     public async Task AddHistory(History record)
@@ -134,7 +134,7 @@
         {
             var remove = history.Pop();
 
-            await IncrementXP.InvokeAsync(remove.Value * -1m);
+            await IncrementXP.InvokeAsync(remove.Value * GetXPMultiplier(remove.ExerciseType) * -1m);
 
             await SetHistories(history);
         }
@@ -177,6 +177,14 @@ Level {CurrentLevel}";
         ExerciseType.Running => "🏃",
         ExerciseType.Swimming => "🏊‍♂",
         ExerciseType.Rowing => "🚣",
+        _ => throw new NotSupportedException()
+    };
+
+    public decimal GetXPMultiplier(ExerciseType exerciseType) => exerciseType switch
+    {
+        ExerciseType.Running => 1m,
+        ExerciseType.Swimming => 4m,
+        ExerciseType.Rowing => 0.5m,
         _ => throw new NotSupportedException()
     };
 }
